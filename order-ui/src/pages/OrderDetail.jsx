@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import api from '../services/api';
 
 export default function OrderDetail() {
   const { id } = useParams();
@@ -12,7 +13,7 @@ export default function OrderDetail() {
   useEffect(() => {
     const fetchOrderAndProducts = async () => {
       try {
-        const res = await axios.get(`/api/orders/${id}`, {
+        const res = await api.get(`/orders/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
 
@@ -20,7 +21,7 @@ export default function OrderDetail() {
           (res.data.items || []).map(async (item) => {
             if (!item.productId) return item;
             try {
-              const productRes = await axios.get(`/api/products/${item.productId}`, {
+              const productRes = await api.get(`/products/${item.productId}`, {
                 headers: { Authorization: `Bearer ${token}` }
               });
               return {
@@ -65,7 +66,7 @@ export default function OrderDetail() {
               <button
                 onClick={async () => {
                   try {
-                    const res = await axios.get(`/api/orders/${order.orderID}/invoice-url`, {
+                    const res = await api.get(`/orders/${order.orderID}/invoice-url`, {
                       headers: { Authorization: `Bearer ${token}` }
                     });
                     window.open(res.data, '_blank');

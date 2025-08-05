@@ -4,18 +4,16 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import api from '../services/api';
 import { Trash2 } from 'lucide-react';
-
 export default function CreateOrder() {
   const [customerName, setCustomerName] = useState('');
   const [items, setItems] = useState([{ productId: '', quantity: 1 }]);
   const [products, setProducts] = useState([]);
   const [invoiceFile, setInvoiceFile] = useState(null);
   const navigate = useNavigate();
-
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await axios.get('/api/products', {
+        const res = await api.get('/products',{
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         });
         setProducts(res.data);

@@ -1,5 +1,44 @@
 server:
   port: ${PORT:5000}
 
+# AWS Configuration
 aws:
   region: ap-south-1
+  
+# Spring Configuration
+spring:
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:production}
+  
+# Logging Configuration (Important for debugging deployment issues)
+logging:
+  level:
+    com.example.orderservice: DEBUG
+    org.springframework.security: DEBUG
+    software.amazon.awssdk: INFO
+    root: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# Management endpoints (for health checks)
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
+
+---
+# Production Profile
+spring:
+  config:
+    activate:
+      on-profile: production
+      
+# Add any production-specific configurations here
+logging:
+  level:
+    com.example.orderservice: INFO
+    root: WARN
