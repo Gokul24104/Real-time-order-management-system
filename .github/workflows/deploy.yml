@@ -1,0 +1,42 @@
+name: Deploy Spring Boot to Elastic Beanstalk
+
+on:
+  push:
+    branches:
+      - master  # or main if your branch is named main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'corretto'
+          java-version: '21'
+
+      - name: Build with Maven
+        working-directory: order-service
+        run: mvn clean package -DskipTests
+
+      - name: Generate ZIP bundle
+        working-directory: order-service
+        run: |
+          mkdir -p deploy
+          cp target/*.jar deploy/application.jar
+          zip -r ../app.zip deploy
+
+      - name: Deploy to Elastic Beanstalk
+        uses: einaregilsson/beanstalk-deploy@v21
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: OrderManagementApp
+          environment_name: OrderManagementApp-env
+          region: ap-south-1
+          version_label: ${{ github.run_number }}
+          deployment_package: app.zip
