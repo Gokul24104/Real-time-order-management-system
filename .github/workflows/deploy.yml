@@ -3,7 +3,7 @@ name: Deploy Spring Boot to Elastic Beanstalk
 on:
   push:
     branches:
-      - master  # or 'main' if your default branch is 'main'
+      - master
 
 jobs:
   deploy:
@@ -23,11 +23,10 @@ jobs:
         working-directory: order-service
         run: mvn clean package -DskipTests
 
-      - name: Generate deployment package
-        working-directory: order-service
+      - name: Prepare deployment package
         run: |
           mkdir -p deploy
-          cp target/*.jar deploy/application.jar
+          cp order-service/target/*.jar deploy/application.jar
           cd deploy
           zip ../app.zip application.jar
 
@@ -41,4 +40,3 @@ jobs:
           region: ap-south-1
           version_label: ${{ github.run_number }}
           deployment_package: app.zip
-          use_existing_version_if_available: false  # optional: strict mode
